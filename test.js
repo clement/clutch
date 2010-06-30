@@ -53,14 +53,14 @@ function testBasic() {
                                ['POST /$', echo(2)],
                                ['* /$', echo(3)]]);
 
-    router(new MockRequest('GET', '/'), new MockResponse('testBasic1', 1, 200)); 
-    router(new MockRequest('POST', '/'), new MockResponse('testBasic1', 2, 200)); 
-    router(new MockRequest('OPTIONS', '/'), new MockResponse('testBasic2', 3, 200)); 
-    router(new MockRequest('GET', '/foo/'), new MockResponse('testBasic3', undefined, 404));
+    assert.ok(router(new MockRequest('GET', '/'), new MockResponse('testBasic1', 1, 200)), 'testBasic1');
+    assert.ok(router(new MockRequest('POST', '/'), new MockResponse('testBasic3', 2, 200)), 'testBasic2');
+    assert.ok(router(new MockRequest('OPTIONS', '/'), new MockResponse('testBasic4', 3, 200)), 'testBasic3');
+    assert.ok(!router(new MockRequest('GET', '/foo/'), new MockResponse('testBasic4')), 'testBasic4');
 }
 
 function test404() {
-    var router = clutch.route([['GET /onlyget/$', echo(1)],
+    var router = clutch.route404([['GET /onlyget/$', echo(1)],
                                 ['POST /onlypost/$', echo(2)],
                                 ['* /everything/$', echo(3)]]);
     router(new MockRequest('GET', '/onlypost/'), new MockResponse('test404-1', undefined, 404));
@@ -70,19 +70,19 @@ function test404() {
 function testNoRoutes() {
     var router = clutch.route([]);
 
-    router(new MockRequest('GET', '/'), new MockResponse('testNoRoutes1', undefined, 404));
+    assert.ok(!router(new MockRequest('GET', '/'), new MockResponse('testNoRoutes1')), 'testNoRoutes1');
 }
 
 function testDynamicRoutes() {
     var routes = [['GET /$', echo(1)],
                   ['POST /$', echo(2)]];
 
-    clutch.route(routes, new MockRequest('GET', '/'), new MockResponse('testDynamic1', 1, 200));
-    clutch.route(routes, new MockRequest('POST', '/'), new MockResponse('testDynamic2', 2, 200));
+    clutch.route404(routes, new MockRequest('GET', '/'), new MockResponse('testDynamic1', 1, 200));
+    clutch.route404(routes, new MockRequest('POST', '/'), new MockResponse('testDynamic2', 2, 200));
 }
 
 function testPriority() {
-    var router = clutch.route([['GET /foo/$', echo(1)],
+    var router = clutch.route404([['GET /foo/$', echo(1)],
                                ['* /', echo(2)],
                                ['POST /foo/$', echo(3)]]);
     router(new MockRequest('GET', '/foo/'), new MockResponse('testPriority1', 1, 200));
@@ -90,7 +90,7 @@ function testPriority() {
 }
 
 function testParams() {
-    var router = clutch.route([['* /(\\w+)/$', echo(1)],
+    var router = clutch.route404([['* /(\\w+)/$', echo(1)],
                                ['* /(\\w+)(/?)(\\w*)$', echo(2)]]);
     router(new MockRequest('GET', '/foo/'), new MockResponse('testParams1', 1, 200, '["foo"]'));
     router(new MockRequest('GET', '/foo'), new MockResponse('testParams2', 2, 200, '["foo","",""]'));

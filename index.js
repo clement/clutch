@@ -50,16 +50,38 @@ clutch.route = function (urls, req, res) {
         var i;
         for (i in routes) {
             if (routes[i].match(req, res)) {
-                return;
+                return true;
             }
         }
 
-        res.writeHead(404);
-        res.end();
+        return false;
     }
 
     if (req && res) {
-        _route(req, res);
+        return _route(req, res);
+    }
+    else {
+        return _route;
+    }
+}
+
+clutch.route404 = function (urls, req, res) {
+    // Just an utility function that will send back
+    // a 404 error and return false if no matching route
+    // can be found for the current request
+
+    var router = clutch.route(urls);
+
+    var _route = function (req, res) {
+        if (!router(req, res)) {
+            res.writeHead(404);
+            res.end();
+        }
+        return true;
+    }
+
+    if (req && res) {
+        return _route(req, res);
     }
     else {
         return _route;
