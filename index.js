@@ -1,30 +1,34 @@
 var clutch = exports,
-    url    = require('url'),
-    slice  = Array.prototype.slice;
+    url    = require('url');
 
-var Route = function (method, path_re, callback) {
-    this.method = method;
-    this.path_re = path_re;
-    this.callback = callback;
+function slice(arrayLike) {
+    // A slice method that works on pseudo-arrays like
+    // `arguments` or the result of a regexp match
+
+    var sliceMethod = Array.prototype.slice;
+    return sliceMethod.apply(arrayLike, sliceMethod.apply(arguments, [1]));
 }
-Route.prototype.match = function (req, resp) {
-    // Call the route callback with captured parameters
-    // if the request URL match
-    //
-    // Return `true` if the request matched, `false` otherwise
 
-    // `*` match on all methods
-    if (this.method == '*' || this.method.toLowerCase() == req.method.toLowerCase()) {
-        var parts,
-            path = url.parse(req.url).pathname;
+function Route(method, path_re, callback) {
+    return function (req, resp) {
+        // Call the route callback with captured parameters
+        // if the request URL match
+        //
+        // Return `true` if the request matched, `false` otherwise
 
-        if (parts = path.match(this.path_re)) {
-            this.callback.apply(null, slice.apply(arguments).concat(slice.apply(parts, [1])));
-            return true;
+        // `*` match on all methods
+        if (method == '*' || method.toLowerCase() == req.method.toLowerCase()) {
+            var parts,
+                path = url.parse(req.url).pathname;
+
+            if (parts = path.match(path_re)) {
+                callback.apply(null, slice(arguments).concat(slice(parts, 1)));
+                return true;
+            }
         }
-    }
 
-    return false;
+        return false;
+    };
 }
 
 
@@ -43,13 +47,13 @@ clutch.route = function (urls, req, res) {
             throw new Error('invalid URL : `'+urls[i][0]+'`');
         }
 
-        routes.push(new Route(parts[1], new RegExp('^'+parts[2]), urls[i][1]));
+        routes.push(Route(parts[1], new RegExp('^'+parts[2]), urls[i][1]));
     }
 
     var _route = function(req, res) {
         var i;
         for (i in routes) {
-            if (routes[i].match(req, res)) {
+            if (routes[i].apply(null, arguments)) {
                 return true;
             }
         }
@@ -58,7 +62,7 @@ clutch.route = function (urls, req, res) {
     }
 
     if (req && res) {
-        return _route(req, res);
+        return _route.apply(null, slice(arguments, 1));
     }
     else {
         return _route;
@@ -73,7 +77,7 @@ clutch.route404 = function (urls, req, res) {
     var router = clutch.route(urls);
 
     var _route = function (req, res) {
-        if (!router(req, res)) {
+        if (!router.apply(null, arguments)) {
             res.writeHead(404);
             res.end();
         }
@@ -81,7 +85,7 @@ clutch.route404 = function (urls, req, res) {
     }
 
     if (req && res) {
-        return _route(req, res);
+        return _route.apply(null, slice(arguments, 1));
     }
     else {
         return _route;

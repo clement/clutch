@@ -97,6 +97,13 @@ function testParams() {
     router(new MockRequest('GET', '/foo/bar'), new MockResponse('testParams3', 2, 200, '["foo","/","bar"]'));
 }
 
+function testExtraParams() {
+    var router = clutch.route404([['GET /$', echo(1)],
+                                  ['GET /(.*)$', echo(2)]]);
+    router(new MockRequest('GET', '/'), new MockResponse('testExtraParams1', 1, 200, '[42,"bar"]'), 42, 'bar');
+    router(new MockRequest('GET', '/foo'), new MockResponse('testExtraParams2', 2, 200, '[42,"baz","foo"]'), 42, 'baz');
+}
+
 var tests = [
     testInvalidRoute,
     testBasic,
@@ -104,7 +111,8 @@ var tests = [
     testNoRoutes,
     testDynamicRoutes,
     testPriority,
-    testParams
+    testParams,
+    testExtraParams
 ];
 
 sys.log('Test suite started');
