@@ -8,6 +8,12 @@ var Route = function (method, path_re, callback) {
     this.callback = callback;
 }
 Route.prototype.match = function (req, resp) {
+    // Call the route callback with captured parameters
+    // if the request URL match
+    //
+    // Return `true` if the request matched, `false` otherwise
+
+    // `*` match on all methods
     if (this.method == '*' || this.method.toLowerCase() == req.method.toLowerCase()) {
         var parts,
             path = url.parse(req.url).pathname;
@@ -21,7 +27,12 @@ Route.prototype.match = function (req, resp) {
     return false;
 }
 
+
 clutch.route = function (urls, req, res) {
+    // If called without request and response parameters,
+    // it will return a routing function, otherwise
+    // it directly route the request
+
     var url_re = /^(\S+)\s(.*)$/;
     var routes = [];
 
