@@ -19,11 +19,16 @@ function Route(method, path_re, callback) {
         // `*` match on all methods
         if (method == '*' || method.toLowerCase() == req.method.toLowerCase()) {
             var parts,
-                path = url.parse(req.url).pathname;
+                // TODO feeling dirty monkey-patching ServerRequest like that,
+                // look for a parameter passing solution on next versions
+                path = ('clutch_url_remainder' in req ? req.clutch_url_remainder : url.parse(req.url).pathname);
 
             if (parts = path.match(path_re)) {
-                callback.apply(null, slice(arguments).concat(slice(parts, 1)));
-                return true;
+                req.clutch_url_remainder = parts.input.substr(parts[0].length);
+                var result = callback.apply(null, slice(arguments).concat(slice(parts, 1)));
+                req.clutch_url_remainder = path;
+
+                return (result === undefined ? true : result);
             }
         }
 
