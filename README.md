@@ -1,8 +1,8 @@
 # clutch
 
-A no-frills web request router for [node.js][1]. With all those nice features:
+A no-frills web request router for [node.js](http://nodejs.org). With all those nice features:
 
-* Standard RegExp patterns ([Scylla][2] inspired)
+* Standard RegExp patterns ([Scylla](http://github.com/ithinkihaveacat/node-scylla/) inspired)
 * Parameters capture
 * Nested routes
 
@@ -44,6 +44,10 @@ Run that swell hello world server, and send a few requests to test it:
     ...
 
 ## In-depth
+
+### Installing
+
+Aside from manually installing clutch from git, you can also get it from [kiwi](http://github.com/visionmedia/kiwi), [npm](http://github.com/isaacs/npm) and [seed](http://seedjs.org/).
 
 ### Invoking
 
@@ -153,6 +157,3 @@ Also, any parameters given to a routing function will be forwarded to the callba
 
 Clément Nodet
 [clement.nodet@gmail.com](mailto:clement.nodet@gmail.com)
-
-[1]: <http://nodejs.org/>
-[2]: <http://github.com/ithinkihaveacat/node-scylla/>
