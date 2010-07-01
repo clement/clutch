@@ -45,7 +45,6 @@ function testInvalidRoute() {
     assert.throws(function () { clutch.route([['']]); }, 'testInvalidRoute1');
     assert.throws(function () { clutch.route([['/$']]); }, 'testInvalidRoute2');
     assert.throws(function () { clutch.route([['GET/$']]); }, 'testInvalidRoute3');
-    assert.throws(function () { clutch.route([['GET']]); }, 'testInvalidRoute4');
 }
 
 function testBasic() {
@@ -142,6 +141,13 @@ function testIncludedRoutesExtraParams() {
     router(new MockRequest('GET', '/blog/mine/post/42/'), new MockResponse('testIncludedRoutesExtraParams', 1, 200, '["foo","baz","mine","42"]'), 'foo', 'baz');
 }
 
+function testPassThru() {
+    var router = clutch.route404([['GET', echo(1)], ['*', echo(2)]]);
+
+    router(new MockRequest('GET', '/foo/bar/'), new MockResponse('testPassThru1', 1, 200));
+    router(new MockRequest('POST', '/foo/bar/'), new MockResponse('testPassThru2', 2, 200));
+}
+
 var tests = [
     testInvalidRoute,
     testBasic,
@@ -153,7 +159,8 @@ var tests = [
     testExtraParams,
     testIncludedRoutes,
     testIncludedRoutes404,
-    testIncludedRoutesExtraParams
+    testIncludedRoutesExtraParams,
+    testPassThru
 ];
 
 sys.log('Test suite started');

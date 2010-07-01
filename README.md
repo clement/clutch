@@ -107,7 +107,7 @@ If you just want a simple **404** behaviour, you can use `clutch.route404`, whic
 
 ### Matching rules
 
-A matching rule is simply a string containing a method selector and a regular expression, separated by a single space.
+A matching rule is simply a string containing a method selector and a regular expression, separated by a single space. The regular expression part is optionnal, if omitted, your rule will match on any request path.
 
 > **Free tip**
 >
@@ -118,6 +118,7 @@ Method selectors can be any HTTP method name, or the wildcard character (`*`) to
     'GET /blog/$' // will match a GET request to /blog/, but not a POST request
     '* /$' // will match any HTTP request to /
     'OPTIONS .*$' // will match any OPTIONS request
+    'OPTIONS' // same as above
 
 It is not necessary to prefix your regular expressions with a start of line (`^`) character, as it is done automatically inside clutch. But the end of line (`$`) character does matter, so be careful:
 
