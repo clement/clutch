@@ -15,8 +15,7 @@ Install clutch and run the tests:
 
 Copy the following snippet in a `hello.js` file:
 
-    var clutch = require('./clutch'),
-        http   = require('http');
+    var clutch = require('./clutch');
 
     function helloSomeone(req, res, name) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -27,14 +26,17 @@ Copy the following snippet in a `hello.js` file:
         helloSomeone(req, res, 'World');
     }
 
-    var router = clutch.route404([['GET /hello/(\\w+)/$', helloSomeone],
-                                  ['GET /hello/$', helloWorld]]);
+    exports.urls = clutch.route404([['GET /hello/(\\w+)/$', helloSomeone],
+                                    ['GET /hello/$', helloWorld]]);
     
-    http.createServer(router).listen(8080, '127.0.0.1');
+and this in `server.js`:
+
+    var http = require('http');
+    http.createServer(require('./hello').urls).listen(8080, '127.0.0.1');
     
 Run that swell hello world server, and send a few requests to test it:
 
-    $ node hello.js &
+    $ node server.js &
     $ curl http://127.0.0.1:8080/hello/yourself/
     Hello yourself!
     $ curl http://127.0.0.1:8080/hello/
@@ -42,6 +44,31 @@ Run that swell hello world server, and send a few requests to test it:
     $ curl http://127.0.0.1:8080/foo/ -i
     HTTP/1.1 404 Not Found
     ...
+
+# 10 seconds more to learn nested routes
+
+Modify slightly `server.js`:
+
+    var http   = require('http'),
+        clutch = require('clutch');
+
+    function homepage(req, res) {
+        res.writeHead(200, {'Content-Type': 'text-plain'});
+        res.end('Welcome to echo server.\n');
+    }
+
+    var routes = clutch.route404([['* /app', require('./hello').urls],
+                                  ['GET /$', homepage]]);
+
+    http.createServer(routes).listen(8080, '127.0.0.1');
+
+Then again:
+
+    $ node server.js &
+    $ curl http://127.0.0.1:8080/
+    Welcome to echo server.
+    $ curl http://127.0.0.1:8080/app/hello/yourself/
+    Hello yourself!
 
 ## In-depth
 
