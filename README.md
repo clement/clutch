@@ -47,7 +47,7 @@ Run that swell hello world server, and send a few requests to test it:
 
 ### Installing
 
-Aside from manually installing clutch from git, you can also get it from [kiwi](http://github.com/visionmedia/kiwi), [npm](http://github.com/isaacs/npm) and [seed](http://seedjs.org/).
+Aside from manually installing clutch from git, you can also get it from [kiwi](http://github.com/visionmedia/kiwi) or [npm](http://github.com/isaacs/npm).
 
 ### Invoking
 
