@@ -148,6 +148,14 @@ function testPassThru() {
     router(new MockRequest('POST', '/foo/bar/'), new MockResponse('testPassThru2', 2, 200));
 }
 
+function testSlashes() {
+    var router = clutch.route404([['* //$', echo(1)], ['* ///$', echo(2)], ['* ////$', echo(3)]]);
+
+    router(new MockRequest('GET', '//'), new MockResponse('testSlashes1', 1, 200));
+    router(new MockRequest('GET', '///'), new MockResponse('testSlashes2', 2, 200));
+    router(new MockRequest('GET', '////'), new MockResponse('testSlashes3', 3, 200));
+}
+
 var tests = [
     testInvalidRoute,
     testBasic,
@@ -160,7 +168,8 @@ var tests = [
     testIncludedRoutes,
     testIncludedRoutes404,
     testIncludedRoutesExtraParams,
-    testPassThru
+    testPassThru,
+    testSlashes
 ];
 
 sys.log('Test suite started');
